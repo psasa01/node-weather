@@ -1,6 +1,8 @@
-/* const yargs = require('yargs');
+const yargs = require('yargs');
 
-const geocode = require('./geocode/geocode.js');
+const geocode = require('./geocode/geocode');
+
+const weather = require('./weather/weather')
 
 const argv = yargs
     .options({
@@ -15,28 +17,22 @@ const argv = yargs
     .alias('help', 'h')
     .argv;
 
-geocode.geocodeAddress(argv.address, (err, result) => {
+geocode.geocodeAddress(argv.address, (err, results) => {
     if (err) {
         console.log(err);
     } else {
-        console.log(JSON.stringify(result, undefined, 2));
-    }
-});
+        console.log(results.address);
+        weather.getWeather(results.latitude, results.longitude, (err, weatherResults) => {
+            if (err) {
+                console.log(err);
+            } else {
+                var tempCelsius = ((weatherResults.temperature - 32) * 0.5556);
+                var tempCelsFixed = tempCelsius.toFixed(2);
+                var apparentCelsius = ((weatherResults.apparentTemperature - 32) * 0.5556);
+                var apparentCelsFixed = apparentCelsius.toFixed(2);
+                console.log(`It's currently ${tempCelsFixed} deg C. It feels like ${apparentCelsFixed} deg C`);
+            }
+        });
 
-
-*/
-
-const request = require('request');
-
-request({
-    url: 'https://api.darksky.net/forecast/012b1089f6bca5ab119323674c411da1/43.8261875,18.3509568',
-    json: true
-}, (error, response, body) => {
-    if (error) {
-        console.log('Unable to connect to server!');
-    } else if (response.statusCode === 400) {
-        console.log('Unable to fetch weather');
-    } else if (response.statusCode === 200) {
-        console.log(body.currently.temperature);
-    }
+    };
 });
