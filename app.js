@@ -33,6 +33,5 @@ geocode.geocodeAddress(argv.address, (err, results) => {
                 console.log(`It's currently ${tempCelsFixed} deg C. It feels like ${apparentCelsFixed} deg C`);
             }
         });
-
     };
 });
